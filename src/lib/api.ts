@@ -63,6 +63,9 @@ export const api = {
   getLyrics: (videoId: string) =>
     request<Lyrics>(`/lyrics/${encodeURIComponent(videoId)}`),
 
+  getRelated: (videoId: string) =>
+    request<Track[]>(`/related/${encodeURIComponent(videoId)}`),
+
   queueAdd: (videoId: string, source?: string) =>
     request<{ ok: boolean; videoId: string }>('/queue/add', {
       method: 'POST',

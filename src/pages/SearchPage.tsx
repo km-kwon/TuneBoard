@@ -1,10 +1,12 @@
 import { motion } from 'framer-motion';
 import { Search, Music2, Play, ListPlus, ListEnd } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useSearch } from '@/hooks/useApi';
 import { useDebounced } from '@/hooks/useDebounced';
 import { useRecentSearches } from '@/hooks/useRecentSearches';
 import { usePlayerStore } from '@/stores/playerStore';
+import { useUIStore } from '@/stores/uiStore';
 import { useSearchStore } from '@/stores/searchStore';
 import { Skeleton } from '@/components/common/Skeleton';
 import { ContextMenuPortal, type ContextMenuItem } from '@/components/common/ContextMenu';
@@ -338,6 +340,13 @@ function SongResults({ songs, videos }: { songs: Track[]; videos: Track[] }) {
 
 function VideoResults({ videos }: { videos: Track[] }) {
   const setQueue = usePlayerStore((s) => s.setQueue);
+  const setMode = useUIStore((s) => s.setMode);
+  const navigate = useNavigate();
+  const playInVideoMode = (i: number) => {
+    setMode('video');
+    setQueue(videos, i);
+    navigate('/video');
+  };
   return (
     <motion.section variants={sectionVariants}>
       <h2 className="mb-4 font-display text-xl font-semibold">Videos</h2>
@@ -345,7 +354,7 @@ function VideoResults({ videos }: { videos: Track[] }) {
         {videos.slice(0, 6).map((v, i) => (
           <button
             key={v.videoId}
-            onClick={() => setQueue(videos, i)}
+            onClick={() => playInVideoMode(i)}
             className="group flex gap-3 rounded-md bg-surface-2/60 p-3 text-left transition-colors hover:bg-surface-3"
           >
             <div className="relative aspect-video w-32 shrink-0 overflow-hidden rounded-sm bg-surface-3">

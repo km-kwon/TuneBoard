@@ -67,3 +67,22 @@ export function useLyrics(videoId: string | null | undefined) {
     retry: false,
   });
 }
+
+export function useRelated(videoId: string | null | undefined) {
+  return useQuery({
+    queryKey: ['related', videoId],
+    queryFn: () => api.getRelated(videoId!),
+    enabled: !!videoId,
+    staleTime: FIVE_MIN,
+    retry: 1,
+  });
+}
+
+export function useTrackInfo(videoId: string | null | undefined) {
+  return useQuery({
+    queryKey: ['track-info', videoId],
+    queryFn: () => api.getTrackInfo(videoId!),
+    enabled: !!videoId,
+    staleTime: FIVE_MIN,
+  });
+}

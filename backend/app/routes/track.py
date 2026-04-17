@@ -5,7 +5,7 @@ import logging
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
-from ..normalize import _best_thumb, _parse_duration, normalize_lyrics, normalize_track
+from ..normalize import _best_thumb, _parse_duration, normalize_lyrics, normalize_track, normalize_tracks
 from ..ytmusic_client import get_client
 
 router = APIRouter()
@@ -69,3 +69,17 @@ def queue_add(payload: QueueAddPayload) -> dict:
     # Logging-only hook for now. Actual queue lives in the frontend store.
     log.info("[queue/add] videoId=%s source=%s", payload.videoId, payload.source)
     return {"ok": True, "videoId": payload.videoId}
+
+
+@router.get("/related/{video_id}")
+def related(video_id: str, limit: int = 20) -> list[dict]:
+    """Up-next queue from get_watch_playlist — used as the 'related videos' rail."""
+    yt = get_client()
+    try:
+        watch = yt.get_watch_playlist(videoId=video_id, limit=max(5, min(limit, 50)))
+    except Exception as exc:
+        log.warning("related fetch failed for %s: %s", video_id, exc)
+        return []
+    tracks = watch.get("tracks") or []
+    # Drop the head — that's the currently-playing video itself.
+    return normalize_tracks(tracks[1:])

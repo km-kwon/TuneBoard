@@ -24,8 +24,8 @@ export function useYouTubePlayer() {
       if (cancelled || !mountRef.current || !window.YT) return;
 
       playerInstance = new YT.Player(mountRef.current, {
-        height: '1',
-        width: '1',
+        height: '100%',
+        width: '100%',
         playerVars: {
           autoplay: 0,
           controls: 0,
@@ -33,7 +33,7 @@ export function useYouTubePlayer() {
           modestbranding: 1,
           playsinline: 1,
           rel: 0,
-          fs: 0,
+          fs: 1,
           iv_load_policy: 3,
           origin: window.location.origin,
         },
