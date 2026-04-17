@@ -1,5 +1,5 @@
 import { Volume2, VolumeX, Volume1 } from 'lucide-react';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { usePlayerStore } from '@/stores/playerStore';
 import { cn } from '@/lib/utils';
 
@@ -11,9 +11,26 @@ export function VolumeControl() {
 
   const [hover, setHover] = useState(false);
   const trackRef = useRef<HTMLDivElement>(null);
+  const [bounceKey, setBounceKey] = useState(0);
+  const firstRender = useRef(true);
+  const prevMuted = useRef(isMuted);
+
+  // Bounce the icon whenever mute/silent state transitions.
+  const silent = isMuted || volume === 0;
+  useEffect(() => {
+    if (firstRender.current) {
+      firstRender.current = false;
+      prevMuted.current = silent;
+      return;
+    }
+    if (silent !== prevMuted.current) {
+      setBounceKey((k) => k + 1);
+      prevMuted.current = silent;
+    }
+  }, [silent]);
 
   const displayVolume = isMuted ? 0 : volume;
-  const Icon = displayVolume === 0 ? VolumeX : displayVolume < 40 ? Volume1 : Volume2;
+  const Icon = silent ? VolumeX : displayVolume < 40 ? Volume1 : Volume2;
 
   const valueFromClient = (clientX: number) => {
     const rect = trackRef.current?.getBoundingClientRect();
@@ -44,10 +61,30 @@ export function VolumeControl() {
     >
       <button
         onClick={toggleMute}
-        className="flex h-8 w-8 items-center justify-center rounded-full text-text-secondary transition-colors hover:text-text-primary"
+        className={cn(
+          'relative flex h-8 w-8 items-center justify-center rounded-full transition-colors',
+          silent ? 'text-hot hover:text-hot/80' : 'text-text-secondary hover:text-text-primary',
+        )}
         aria-label={isMuted ? 'Unmute' : 'Mute'}
+        aria-pressed={silent}
       >
-        <Icon className="h-4 w-4" />
+        <span key={bounceKey} className={cn('relative inline-flex', bounceKey > 0 && 'anim-mute-bounce')}>
+          <Icon className="h-4 w-4" />
+          {silent && (
+            <svg
+              aria-hidden
+              className="absolute -right-1 -top-1 h-3 w-3 text-hot"
+              viewBox="0 0 12 12"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2.5}
+              strokeLinecap="round"
+            >
+              <circle cx="6" cy="6" r="5" fill="rgb(var(--surface-1))" stroke="currentColor" />
+              <path d="M3.5 3.5 L8.5 8.5 M8.5 3.5 L3.5 8.5" />
+            </svg>
+          )}
+        </span>
       </button>
       <div
         ref={trackRef}

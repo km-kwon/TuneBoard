@@ -7,6 +7,9 @@ export default function App() {
   useGlobalShortcuts();
   const theme = useUIStore((s) => s.theme);
 
+  // Reassert theme attribute on mount — store rehydration runs custom theme
+  // CSS variable injection, but the data-theme attribute still needs to be set
+  // because it's not persisted on the DOM across reloads.
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
   }, [theme]);

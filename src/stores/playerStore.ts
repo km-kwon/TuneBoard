@@ -11,6 +11,8 @@ import {
   ytUnMute,
 } from '@/lib/youtubeApi';
 import { DUMMY_TRACKS } from '@/data/dummyTracks';
+import { useStatsStore } from '@/stores/statsStore';
+import { useToastStore } from '@/stores/toastStore';
 
 export type PlayerStatus = 'idle' | 'loading' | 'playing' | 'paused' | 'ended';
 
@@ -58,6 +60,7 @@ interface PlayerState {
   setQueue: (tracks: Track[], startIndex?: number) => void;
   addToQueue: (track: Track, position?: 'next' | 'end') => void;
   removeFromQueue: (index: number) => void;
+  reorderQueue: (fromIndex: number, toIndex: number) => void;
   clearQueue: () => void;
 
   openNowPlaying: () => void;
@@ -71,6 +74,8 @@ interface PlayerState {
 }
 
 const HISTORY_MAX = 100;
+
+const _lastStatsCommit = { trackId: '' as string, time: 0 };
 
 export const usePlayerStore = create<PlayerState>()(
   persist(
@@ -116,6 +121,9 @@ export const usePlayerStore = create<PlayerState>()(
             ),
           }));
           ytLoad(target.videoId, 0);
+          try {
+            useStatsStore.getState().logPlay(target, 0);
+          } catch { /* stats is optional */ }
         } else {
           ytPlay();
         }
@@ -248,6 +256,9 @@ export const usePlayerStore = create<PlayerState>()(
           }
           return { queue: [...s.queue, track] };
         });
+        try {
+          useToastStore.getState().pulse('+1 Queue');
+        } catch { /* noop */ }
       },
 
       removeFromQueue: (index) => {
@@ -258,6 +269,33 @@ export const usePlayerStore = create<PlayerState>()(
           if (index < s.queueIndex) nextIdx = s.queueIndex - 1;
           else if (index === s.queueIndex) nextIdx = Math.min(s.queueIndex, next.length - 1);
           return { queue: next, queueIndex: Math.max(0, nextIdx) };
+        });
+      },
+
+      reorderQueue: (fromIndex, toIndex) => {
+        set((s) => {
+          if (
+            fromIndex === toIndex ||
+            fromIndex < 0 ||
+            toIndex < 0 ||
+            fromIndex >= s.queue.length ||
+            toIndex >= s.queue.length
+          ) {
+            return s;
+          }
+          const next = s.queue.slice();
+          const [moved] = next.splice(fromIndex, 1);
+          if (!moved) return s;
+          next.splice(toIndex, 0, moved);
+          let nextIdx = s.queueIndex;
+          if (fromIndex === s.queueIndex) {
+            nextIdx = toIndex;
+          } else if (fromIndex < s.queueIndex && toIndex >= s.queueIndex) {
+            nextIdx = s.queueIndex - 1;
+          } else if (fromIndex > s.queueIndex && toIndex <= s.queueIndex) {
+            nextIdx = s.queueIndex + 1;
+          }
+          return { queue: next, queueIndex: nextIdx };
         });
       },
 
@@ -273,11 +311,25 @@ export const usePlayerStore = create<PlayerState>()(
           status: s,
           isPlaying: s === 'playing',
         }),
-      _setProgress: (time, duration) =>
+      _setProgress: (time, duration) => {
+        const track = get().currentTrack;
+        // Throttle listen-time commits to once every ~5 seconds to keep
+        // localStorage writes (via persist) off the 200ms progress loop.
+        if (track && !get().isScrubbing) {
+          const last = _lastStatsCommit;
+          if (time - last.time >= 5 || last.trackId !== track.videoId) {
+            _lastStatsCommit.trackId = track.videoId;
+            _lastStatsCommit.time = time;
+            try {
+              useStatsStore.getState().extendLastListened(track.videoId, Math.floor(time));
+            } catch { /* noop */ }
+          }
+        }
         set((s) => ({
           currentTime: s.isScrubbing ? s.currentTime : time,
           duration: duration > 0 ? duration : s.duration,
-        })),
+        }));
+      },
     }),
     {
       name: 'tuneboard.player',

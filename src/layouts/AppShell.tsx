@@ -7,6 +7,7 @@ import { QueuePanel } from '@/components/player/QueuePanel';
 import { SearchBar } from '@/components/topbar/SearchBar';
 import { AmbientBackdrop } from '@/components/layout/AmbientBackdrop';
 import { YouTubePlayerHost } from '@/components/layout/YouTubePlayerHost';
+import { PulseToaster } from '@/components/common/PulseToaster';
 import { routes } from '@/router/routes';
 import { usePlayerStore } from '@/stores/playerStore';
 import { useUIStore } from '@/stores/uiStore';
@@ -49,6 +50,8 @@ export function AppShell() {
       <PlayerBar />
 
       <AnimatePresence>{nowPlayingOpen && <NowPlayingView />}</AnimatePresence>
+
+      <PulseToaster />
     </div>
   );
 }

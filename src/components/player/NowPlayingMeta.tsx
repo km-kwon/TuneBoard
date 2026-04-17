@@ -2,9 +2,11 @@ import { Music2 } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { usePlayerStore } from '@/stores/playerStore';
 import { Marquee } from './Marquee';
+import { MiniEqualizer } from './MiniEqualizer';
 
 export function NowPlayingMeta() {
   const track = usePlayerStore((s) => s.currentTrack);
+  const isPlaying = usePlayerStore((s) => s.isPlaying);
 
   if (!track) {
     return (
@@ -22,15 +24,18 @@ export function NowPlayingMeta() {
 
   return (
     <>
-      <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-sm bg-surface-3 shadow-1">
+      <div
+        className="relative h-14 w-14 shrink-0 overflow-hidden rounded-sm bg-surface-3 shadow-1"
+        style={{ perspective: '400px' }}
+      >
         <AnimatePresence mode="wait">
           <motion.div
             key={track.videoId}
-            initial={{ opacity: 0, scale: 1.04 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.96 }}
-            transition={{ duration: 0.32, ease: [0.19, 1, 0.22, 1] }}
-            className="absolute inset-0"
+            initial={{ opacity: 0, rotateY: -45, scale: 0.96 }}
+            animate={{ opacity: 1, rotateY: 0, scale: 1 }}
+            exit={{ opacity: 0, rotateY: 45, scale: 0.96 }}
+            transition={{ duration: 0.38, ease: [0.19, 1, 0.22, 1] }}
+            className="absolute inset-0 [transform-style:preserve-3d]"
           >
             {track.thumbnailUrl ? (
               <img
@@ -54,10 +59,13 @@ export function NowPlayingMeta() {
         </AnimatePresence>
       </div>
       <div className="flex min-w-0 flex-col items-start text-left">
-        <Marquee
-          text={track.title}
-          className="max-w-[200px] text-sm font-semibold leading-tight text-text-primary"
-        />
+        <div className="flex items-center gap-1.5">
+          <Marquee
+            text={track.title}
+            className="max-w-[180px] text-sm font-semibold leading-tight text-text-primary"
+          />
+          <MiniEqualizer active={isPlaying} className="shrink-0" />
+        </div>
         <Marquee
           text={track.artists.map((a) => a.name).join(', ')}
           className="mt-0.5 max-w-[200px] text-xs text-text-secondary"

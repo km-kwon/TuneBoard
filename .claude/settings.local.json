@@ -13,7 +13,11 @@
       "Bash(curl -s http://localhost:5176/src/components/layout/PipChrome.tsx)",
       "Bash(curl -s http://localhost:5176/src/pages/VideoPage.tsx)",
       "Bash(cat)",
-      "Bash(kill %1)"
+      "Bash(kill %1)",
+      "Bash(npx tsc *)",
+      "Bash(ls node_modules/.bin/tsc*)",
+      "Bash(ls node_modules/typescript/bin/)",
+      "Bash(echo \"EXIT=$?\")"
     ]
   }
 }

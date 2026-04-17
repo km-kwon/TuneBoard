@@ -9,7 +9,7 @@ import {
   Repeat1,
   Loader2,
 } from 'lucide-react';
-import type { ButtonHTMLAttributes, ReactNode } from 'react';
+import { useState, type ButtonHTMLAttributes, type ReactNode } from 'react';
 import { usePlayerStore } from '@/stores/playerStore';
 import { cn } from '@/lib/utils';
 
@@ -30,16 +30,25 @@ export function PlaybackControls({ size = 'default' }: PlaybackControlsProps) {
 
   const loading = status === 'loading';
   const large = size === 'large';
+  const [shuffleAnimKey, setShuffleAnimKey] = useState(0);
 
   return (
     <div className={cn('flex items-center', large ? 'gap-3' : 'gap-1.5')}>
       <IconBtn
-        onClick={toggleShuffle}
+        onClick={() => {
+          toggleShuffle();
+          setShuffleAnimKey((k) => k + 1);
+        }}
         active={shuffleMode}
         aria-label="Shuffle"
         size={size}
       >
-        <Shuffle className={large ? 'h-5 w-5' : 'h-4 w-4'} />
+        <span
+          key={shuffleAnimKey}
+          className={cn('inline-flex', shuffleAnimKey > 0 && 'anim-shuffle-card')}
+        >
+          <Shuffle className={large ? 'h-5 w-5' : 'h-4 w-4'} />
+        </span>
       </IconBtn>
       <IconBtn onClick={previous} aria-label="Previous track" size={size}>
         <SkipBack

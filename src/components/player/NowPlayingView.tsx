@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { ChevronDown, Heart, Share2, MoreHorizontal, Music2 } from 'lucide-react';
+import { ChevronDown, Share2, MoreHorizontal, Music2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { usePlayerStore } from '@/stores/playerStore';
 import { extractDominantColor, type RGB } from '@/lib/colorExtract';
@@ -8,6 +8,9 @@ import { PlaybackControls } from './PlaybackControls';
 import { ProgressSlider } from './ProgressSlider';
 import { VolumeControl } from './VolumeControl';
 import { LyricsPanel } from './LyricsPanel';
+import { AudioVisualizer } from './AudioVisualizer';
+import { LikeButton } from './LikeButton';
+import { VisualizerPicker } from './VisualizerPicker';
 
 const FALLBACK: RGB = { r: 255, g: 159, b: 64 }; // matches --accent-500
 
@@ -60,6 +63,8 @@ export function NowPlayingView() {
         />
       </div>
 
+      <AudioVisualizer color={color} />
+
       {/* Top bar */}
       <div className="relative flex h-16 shrink-0 items-center justify-between px-6">
         <button
@@ -72,26 +77,29 @@ export function NowPlayingView() {
         <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-text-tertiary">
           Now Playing
         </p>
-        <button
-          className="flex h-9 w-9 items-center justify-center rounded-full text-text-secondary transition-colors hover:bg-surface-2 hover:text-text-primary"
-          aria-label="More"
-        >
-          <MoreHorizontal className="h-5 w-5" />
-        </button>
+        <div className="flex items-center gap-2">
+          <VisualizerPicker />
+          <button
+            className="flex h-9 w-9 items-center justify-center rounded-full text-text-secondary transition-colors hover:bg-surface-2 hover:text-text-primary"
+            aria-label="More"
+          >
+            <MoreHorizontal className="h-5 w-5" />
+          </button>
+        </div>
       </div>
 
       {/* Stage */}
       <div className="relative grid flex-1 grid-cols-1 gap-8 overflow-hidden px-6 pb-6 lg:grid-cols-[1fr_1.1fr] lg:gap-14 lg:px-12">
         {/* Cover */}
-        <div className="flex items-center justify-center">
+        <div className="flex items-center justify-center" style={{ perspective: '1400px' }}>
           <AnimatePresence mode="wait">
             <motion.div
               key={track?.videoId ?? 'empty'}
-              initial={{ opacity: 0, scale: 0.94 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.96 }}
-              transition={{ duration: 0.45, ease: [0.19, 1, 0.22, 1] }}
-              className="relative aspect-square w-full max-w-[420px] overflow-hidden rounded-lg shadow-3"
+              initial={{ opacity: 0, rotateY: -55, scale: 0.9 }}
+              animate={{ opacity: 1, rotateY: 0, scale: 1 }}
+              exit={{ opacity: 0, rotateY: 55, scale: 0.9 }}
+              transition={{ duration: 0.55, ease: [0.19, 1, 0.22, 1] }}
+              className="relative aspect-square w-full max-w-[420px] overflow-hidden rounded-lg shadow-3 [transform-style:preserve-3d]"
               style={{ boxShadow: `0 30px 80px -20px rgb(${cssRgb} / 0.55)` }}
             >
               {track?.thumbnailUrl ? (
@@ -147,19 +155,11 @@ export function NowPlayingView() {
           </AnimatePresence>
 
           <div className="mt-3 flex shrink-0 items-center gap-2">
-            <button
-              onClick={() => track && toggleLike(track.videoId)}
+            <LikeButton
+              liked={liked}
               disabled={!track}
-              className={cn(
-                'flex h-10 w-10 items-center justify-center rounded-full transition-colors',
-                liked
-                  ? 'text-accent hover:text-accent/80'
-                  : 'text-text-tertiary hover:text-text-primary disabled:opacity-30',
-              )}
-              aria-label={liked ? 'Unlike' : 'Like'}
-            >
-              <Heart className="h-5 w-5" fill={liked ? 'currentColor' : 'none'} />
-            </button>
+              onToggle={() => track && toggleLike(track.videoId)}
+            />
             <button
               className="flex h-10 w-10 items-center justify-center rounded-full text-text-tertiary transition-colors hover:text-text-primary"
               aria-label="Share"

@@ -7,6 +7,7 @@ import { useSearchSuggestions } from '@/hooks/useApi';
 import { useDebounced } from '@/hooks/useDebounced';
 import { useRecentSearches } from '@/hooks/useRecentSearches';
 import { ModeToggle } from './ModeToggle';
+import { ThemePicker } from './ThemePicker';
 
 export function SearchBar() {
   const query = useSearchStore((s) => s.query);
@@ -152,6 +153,7 @@ export function SearchBar() {
 
       <div className="flex items-center gap-3">
         <ModeToggle />
+        <ThemePicker />
         <button
           className="relative flex h-9 w-9 items-center justify-center rounded-full text-text-secondary transition-colors hover:bg-surface-2 hover:text-text-primary"
           aria-label="Notifications"

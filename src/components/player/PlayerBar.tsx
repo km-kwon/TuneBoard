@@ -1,14 +1,14 @@
 import { motion } from 'framer-motion';
-import { ChevronUp, Heart, Maximize2, Video } from 'lucide-react';
+import { ChevronUp, Maximize2, Video } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { usePlayerStore } from '@/stores/playerStore';
 import { useUIStore } from '@/stores/uiStore';
-import { cn } from '@/lib/utils';
 import { NowPlayingMeta } from './NowPlayingMeta';
 import { PlaybackControls } from './PlaybackControls';
 import { ProgressSlider } from './ProgressSlider';
 import { VolumeControl } from './VolumeControl';
 import { ExtraControls } from './ExtraControls';
+import { LikeButton } from './LikeButton';
 
 export function PlayerBar() {
   const openNowPlaying = usePlayerStore((s) => s.openNowPlaying);
@@ -57,19 +57,12 @@ export function PlayerBar() {
             <ChevronUp className="h-4 w-4 shrink-0 text-text-tertiary opacity-0 transition-opacity group-hover:opacity-100" />
           )}
         </button>
-        <button
-          onClick={() => currentTrack && toggleLike(currentTrack.videoId)}
+        <LikeButton
+          liked={liked}
           disabled={!currentTrack}
-          className={cn(
-            'flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition-colors',
-            liked
-              ? 'text-accent hover:text-accent/80'
-              : 'text-text-tertiary hover:text-text-primary disabled:opacity-30',
-          )}
-          aria-label={liked ? 'Unlike' : 'Like'}
-        >
-          <Heart className="h-4 w-4" fill={liked ? 'currentColor' : 'none'} strokeWidth={2} />
-        </button>
+          size="sm"
+          onToggle={() => currentTrack && toggleLike(currentTrack.videoId)}
+        />
       </div>
 
       <div className="flex flex-[1.4] flex-col items-center gap-1.5">

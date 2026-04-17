@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Home, Search, Library, ChevronsLeft, Plus, Music2 } from 'lucide-react';
+import { Home, Search, Library, ChevronsLeft, Plus, Music2, BarChart3 } from 'lucide-react';
 import { useUIStore } from '@/stores/uiStore';
 import { cn } from '@/lib/utils';
 import { NavItem } from './NavItem';
@@ -51,6 +51,7 @@ export function Sidebar() {
         <NavItem to="/" icon={Home} label="Home" collapsed={collapsed} />
         <NavItem to="/search" icon={Search} label="Search" collapsed={collapsed} />
         <NavItem to="/library" icon={Library} label="Library" collapsed={collapsed} />
+        <NavItem to="/stats" icon={BarChart3} label="My Stats" collapsed={collapsed} />
       </nav>
 
       <div className="mx-4 my-3 h-px bg-white/[0.06]" />

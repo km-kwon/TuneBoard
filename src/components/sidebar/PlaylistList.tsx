@@ -1,5 +1,7 @@
 import { NavLink } from 'react-router-dom';
+import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
 import { Heart, AlertCircle } from 'lucide-react';
+import { useRef } from 'react';
 import { cn } from '@/lib/utils';
 import { usePlaylists } from '@/hooks/useApi';
 import { Skeleton } from '@/components/common/Skeleton';
@@ -18,6 +20,9 @@ interface PlaylistListProps {
 
 export function PlaylistList({ collapsed }: PlaylistListProps) {
   const { data, isLoading, isError, error } = usePlaylists();
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const { scrollY } = useScroll({ container: scrollRef });
+  const reduceMotion = useReducedMotion();
 
   const authErr =
     isError && (error as { status?: number } | undefined)?.status === 401;
@@ -25,10 +30,25 @@ export function PlaylistList({ collapsed }: PlaylistListProps) {
   const lists: PlaylistSummary[] = [PINNED, ...(data ?? [])];
 
   return (
-    <div className="min-h-0 flex-1 overflow-y-auto px-2 py-2">
-      <div className="flex flex-col gap-0.5">
-        {lists.map((pl) => (
-          <PlaylistItem key={pl.id} playlist={pl} collapsed={collapsed} />
+    <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto px-2 py-2">
+      <motion.div
+        initial="hidden"
+        animate="show"
+        variants={{
+          hidden: {},
+          show: { transition: { staggerChildren: 0.035, delayChildren: 0.06 } },
+        }}
+        className="flex flex-col gap-0.5"
+      >
+        {lists.map((pl, idx) => (
+          <PlaylistItem
+            key={pl.id}
+            playlist={pl}
+            collapsed={collapsed}
+            index={idx}
+            scrollY={scrollY}
+            reduceMotion={!!reduceMotion}
+          />
         ))}
 
         {isLoading &&
@@ -64,40 +84,59 @@ export function PlaylistList({ collapsed }: PlaylistListProps) {
             </p>
           </div>
         )}
-      </div>
+      </motion.div>
     </div>
   );
 }
 
-function PlaylistItem({ playlist, collapsed }: { playlist: PlaylistSummary; collapsed: boolean }) {
+const itemVariants = {
+  hidden: { opacity: 0, x: -8 },
+  show: { opacity: 1, x: 0, transition: { duration: 0.28, ease: [0.19, 1, 0.22, 1] } },
+};
+
+interface PlaylistItemProps {
+  playlist: PlaylistSummary;
+  collapsed: boolean;
+  index: number;
+  scrollY: ReturnType<typeof useScroll>['scrollY'];
+  reduceMotion: boolean;
+}
+
+function PlaylistItem({ playlist, collapsed, index, scrollY, reduceMotion }: PlaylistItemProps) {
+  // staggered parallax — each item drifts up at a slightly different rate
+  const speed = reduceMotion ? 0 : -0.05 - (index % 5) * 0.015;
+  const parallaxY = useTransform(scrollY, (y) => y * speed);
+
   return (
-    <NavLink
-      to={`/playlist/${playlist.id}`}
-      className={({ isActive }) =>
-        cn(
-          'group flex h-12 items-center gap-3 rounded-sm px-2 transition-colors duration-150 ease-out-quart',
-          isActive
-            ? 'bg-surface-2/80 text-text-primary'
-            : 'text-text-secondary hover:bg-surface-2/60 hover:text-text-primary',
-          collapsed && 'justify-center px-0',
-        )
-      }
-      title={collapsed ? playlist.title : undefined}
-    >
-      <PlaylistThumb playlist={playlist} />
-      {!collapsed && (
-        <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-medium leading-tight">{playlist.title}</p>
-          <p className="mt-0.5 truncate text-[11px] text-text-tertiary">
-            {playlist.pinned
-              ? 'Playlist · Pinned'
-              : playlist.trackCount > 0
-                ? `${playlist.trackCount} tracks`
-                : 'Playlist'}
-          </p>
-        </div>
-      )}
-    </NavLink>
+    <motion.div variants={itemVariants} style={{ y: parallaxY }}>
+      <NavLink
+        to={`/playlist/${playlist.id}`}
+        className={({ isActive }) =>
+          cn(
+            'group flex h-12 items-center gap-3 rounded-sm px-2 transition-colors duration-150 ease-out-quart',
+            isActive
+              ? 'bg-surface-2/80 text-text-primary'
+              : 'text-text-secondary hover:bg-surface-2/60 hover:text-text-primary',
+            collapsed && 'justify-center px-0',
+          )
+        }
+        title={collapsed ? playlist.title : undefined}
+      >
+        <PlaylistThumb playlist={playlist} />
+        {!collapsed && (
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-sm font-medium leading-tight">{playlist.title}</p>
+            <p className="mt-0.5 truncate text-[11px] text-text-tertiary">
+              {playlist.pinned
+                ? 'Playlist · Pinned'
+                : playlist.trackCount > 0
+                  ? `${playlist.trackCount} tracks`
+                  : 'Playlist'}
+            </p>
+          </div>
+        )}
+      </NavLink>
+    </motion.div>
   );
 }
 

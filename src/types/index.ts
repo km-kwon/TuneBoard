@@ -1,6 +1,27 @@
 export type RepeatMode = 'off' | 'all' | 'one';
 export type AppMode = 'music' | 'video';
-export type ThemeName = 'amber' | 'cyan' | 'monochrome';
+export type ThemeName =
+  | 'amber'
+  | 'midnight'
+  | 'spotify'
+  | 'ocean'
+  | 'sunset'
+  | 'monochrome'
+  | 'neon'
+  | 'retro'
+  | 'custom';
+
+export type VisualizerKind = 'waveform' | 'circular' | 'particles' | 'gradient' | 'off';
+
+export interface CustomTheme {
+  accentR: number;
+  accentG: number;
+  accentB: number;
+  hotR: number;
+  hotG: number;
+  hotB: number;
+  brightness: number;
+}
 
 export interface Track {
   videoId: string;
