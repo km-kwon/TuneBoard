@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install *)",
+      "Bash(npm run *)",
+      "Bash(curl -s http://localhost:5174/)",
+      "Bash(curl -s http://localhost:5174/src/main.tsx)",
+      "Bash(python -c \"import sys; print\\(sys.version\\)\")",
+      "Bash(python -m py_compile app/main.py app/normalize.py app/settings.py app/ytmusic_client.py app/routes/playlists.py app/routes/search.py app/routes/home.py app/routes/track.py)"
+    ]
+  }
+}
