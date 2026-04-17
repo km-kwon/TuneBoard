@@ -54,7 +54,7 @@ export function SearchBar() {
     focused && (query.trim().length > 0 ? (suggestions?.length ?? 0) > 0 : recent.length > 0);
 
   return (
-    <header className="sticky top-0 z-10 flex h-16 shrink-0 items-center justify-between gap-4 border-b border-white/[0.04] bg-surface-0/70 px-6 backdrop-blur-2xl">
+    <header className="sticky top-0 z-10 flex h-16 shrink-0 items-center justify-between gap-2 border-b border-white/[0.04] bg-surface-0/70 px-3 backdrop-blur-2xl md:gap-4 md:px-6">
       <div ref={wrapRef} className="relative flex w-full max-w-md items-center">
         <Search className="pointer-events-none absolute left-3.5 z-10 h-4 w-4 text-text-tertiary" />
         <input
@@ -155,7 +155,7 @@ export function SearchBar() {
         <ModeToggle />
         <ThemePicker />
         <button
-          className="relative flex h-9 w-9 items-center justify-center rounded-full text-text-secondary transition-colors hover:bg-surface-2 hover:text-text-primary"
+          className="relative hidden h-9 w-9 items-center justify-center rounded-full text-text-secondary transition-colors hover:bg-surface-2 hover:text-text-primary sm:flex"
           aria-label="Notifications"
         >
           <Bell className="h-4 w-4" />

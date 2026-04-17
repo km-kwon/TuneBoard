@@ -15,7 +15,7 @@ export function Sidebar() {
       animate={{ width: collapsed ? 72 : 256 }}
       initial={false}
       transition={{ duration: 0.32, ease: [0.19, 1, 0.22, 1] }}
-      className="relative z-20 flex h-full shrink-0 flex-col border-r border-white/[0.04] bg-surface-1/80 backdrop-blur-2xl"
+      className="relative z-20 hidden h-full shrink-0 flex-col border-r border-white/[0.04] bg-surface-1/80 backdrop-blur-2xl md:flex"
     >
       {/* Brand + collapse toggle */}
       <div className="flex h-16 shrink-0 items-center justify-between gap-2 px-4">

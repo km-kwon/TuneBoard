@@ -66,7 +66,7 @@ export function NowPlayingView() {
       <AudioVisualizer color={color} />
 
       {/* Top bar */}
-      <div className="relative flex h-16 shrink-0 items-center justify-between px-6">
+      <div className="relative flex h-16 shrink-0 items-center justify-between px-4 md:px-6">
         <button
           onClick={close}
           className="flex h-9 w-9 items-center justify-center rounded-full text-text-secondary transition-colors hover:bg-surface-2 hover:text-text-primary"
@@ -89,7 +89,7 @@ export function NowPlayingView() {
       </div>
 
       {/* Stage */}
-      <div className="relative grid flex-1 grid-cols-1 gap-8 overflow-hidden px-6 pb-6 lg:grid-cols-[1fr_1.1fr] lg:gap-14 lg:px-12">
+      <div className="relative grid flex-1 grid-cols-1 gap-6 overflow-y-auto px-4 pb-6 md:gap-8 md:overflow-hidden md:px-6 lg:grid-cols-[1fr_1.1fr] lg:gap-14 lg:px-12">
         {/* Cover */}
         <div className="flex items-center justify-center" style={{ perspective: '1400px' }}>
           <AnimatePresence mode="wait">
@@ -145,7 +145,7 @@ export function NowPlayingView() {
               <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.22em] text-text-tertiary">
                 {track?.album?.name ?? 'Single'}
               </p>
-              <h2 className="font-display text-4xl font-bold leading-tight tracking-tight">
+              <h2 className="font-display text-2xl font-bold leading-tight tracking-tight md:text-4xl">
                 {track?.title ?? 'Nothing playing'}
               </h2>
               <p className="mt-2 text-base text-text-secondary">
@@ -173,14 +173,14 @@ export function NowPlayingView() {
       </div>
 
       {/* Bottom transport */}
-      <div className="relative flex shrink-0 flex-col items-center gap-3 px-6 pb-10 pt-2 lg:px-12">
+      <div className="relative flex shrink-0 flex-col items-center gap-3 px-4 pb-6 pt-2 md:px-6 md:pb-10 lg:px-12">
         <PlaybackControls size="large" />
         <div className="flex w-full max-w-3xl items-center gap-4">
           <div className="flex-1">
             <ProgressSlider variant="large" />
           </div>
         </div>
-        <div className="absolute bottom-10 right-6 lg:right-12">
+        <div className="absolute bottom-10 right-6 hidden md:block lg:right-12">
           <VolumeControl />
         </div>
       </div>

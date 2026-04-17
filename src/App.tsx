@@ -1,10 +1,12 @@
 import { useEffect } from 'react';
 import { AppShell } from '@/layouts/AppShell';
 import { useGlobalShortcuts } from '@/hooks/useShortcuts';
+import { useMediaSession } from '@/hooks/useMediaSession';
 import { useUIStore } from '@/stores/uiStore';
 
 export default function App() {
   useGlobalShortcuts();
+  useMediaSession();
   const theme = useUIStore((s) => s.theme);
 
   // Reassert theme attribute on mount — store rehydration runs custom theme

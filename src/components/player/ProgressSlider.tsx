@@ -3,7 +3,7 @@ import { usePlayerStore } from '@/stores/playerStore';
 import { formatTime, cn } from '@/lib/utils';
 
 interface ProgressSliderProps {
-  variant?: 'default' | 'large';
+  variant?: 'default' | 'large' | 'thin';
 }
 
 export function ProgressSlider({ variant = 'default' }: ProgressSliderProps) {
@@ -20,6 +20,7 @@ export function ProgressSlider({ variant = 'default' }: ProgressSliderProps) {
   const percent = duration > 0 ? (value / duration) * 100 : 0;
   const active = hoverPercent !== null || dragValue !== null;
   const large = variant === 'large';
+  const thin = variant === 'thin';
 
   const ratioFromClient = (clientX: number) => {
     const rect = trackRef.current?.getBoundingClientRect();
@@ -51,6 +52,28 @@ export function ProgressSlider({ variant = 'default' }: ProgressSliderProps) {
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     setHoverPercent(ratioFromClient(e.clientX) * 100);
   };
+
+  if (thin) {
+    return (
+      <div
+        ref={trackRef}
+        onPointerDown={handlePointerDown}
+        className="group relative flex h-2 w-full cursor-pointer touch-none select-none items-center"
+        role="slider"
+        aria-label="Seek"
+        aria-valuemin={0}
+        aria-valuemax={Math.round(duration)}
+        aria-valuenow={Math.round(value)}
+      >
+        <div className="relative h-[3px] w-full overflow-hidden rounded-full bg-surface-3">
+          <div
+            className="h-full rounded-full gradient-accent"
+            style={{ width: `${percent}%` }}
+          />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div

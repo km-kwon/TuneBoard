@@ -15,9 +15,11 @@ import { cn } from '@/lib/utils';
 
 interface PlaybackControlsProps {
   size?: 'default' | 'large';
+  /** Minimal mobile layout: prev · play · next only. */
+  compact?: boolean;
 }
 
-export function PlaybackControls({ size = 'default' }: PlaybackControlsProps) {
+export function PlaybackControls({ size = 'default', compact = false }: PlaybackControlsProps) {
   const status = usePlayerStore((s) => s.status);
   const isPlaying = usePlayerStore((s) => s.isPlaying);
   const togglePlay = usePlayerStore((s) => s.togglePlay);
@@ -34,22 +36,24 @@ export function PlaybackControls({ size = 'default' }: PlaybackControlsProps) {
 
   return (
     <div className={cn('flex items-center', large ? 'gap-3' : 'gap-1.5')}>
-      <IconBtn
-        onClick={() => {
-          toggleShuffle();
-          setShuffleAnimKey((k) => k + 1);
-        }}
-        active={shuffleMode}
-        aria-label="Shuffle"
-        size={size}
-      >
-        <span
-          key={shuffleAnimKey}
-          className={cn('inline-flex', shuffleAnimKey > 0 && 'anim-shuffle-card')}
+      {!compact && (
+        <IconBtn
+          onClick={() => {
+            toggleShuffle();
+            setShuffleAnimKey((k) => k + 1);
+          }}
+          active={shuffleMode}
+          aria-label="Shuffle"
+          size={size}
         >
-          <Shuffle className={large ? 'h-5 w-5' : 'h-4 w-4'} />
-        </span>
-      </IconBtn>
+          <span
+            key={shuffleAnimKey}
+            className={cn('inline-flex', shuffleAnimKey > 0 && 'anim-shuffle-card')}
+          >
+            <Shuffle className={large ? 'h-5 w-5' : 'h-4 w-4'} />
+          </span>
+        </IconBtn>
+      )}
       <IconBtn onClick={previous} aria-label="Previous track" size={size}>
         <SkipBack
           className={large ? 'h-6 w-6' : 'h-[18px] w-[18px]'}
@@ -92,18 +96,20 @@ export function PlaybackControls({ size = 'default' }: PlaybackControlsProps) {
           strokeWidth={0}
         />
       </IconBtn>
-      <IconBtn
-        onClick={toggleRepeat}
-        active={repeatMode !== 'off'}
-        aria-label={`Repeat: ${repeatMode}`}
-        size={size}
-      >
-        {repeatMode === 'one' ? (
-          <Repeat1 className={large ? 'h-5 w-5' : 'h-4 w-4'} />
-        ) : (
-          <Repeat className={large ? 'h-5 w-5' : 'h-4 w-4'} />
-        )}
-      </IconBtn>
+      {!compact && (
+        <IconBtn
+          onClick={toggleRepeat}
+          active={repeatMode !== 'off'}
+          aria-label={`Repeat: ${repeatMode}`}
+          size={size}
+        >
+          {repeatMode === 'one' ? (
+            <Repeat1 className={large ? 'h-5 w-5' : 'h-4 w-4'} />
+          ) : (
+            <Repeat className={large ? 'h-5 w-5' : 'h-4 w-4'} />
+          )}
+        </IconBtn>
+      )}
     </div>
   );
 }

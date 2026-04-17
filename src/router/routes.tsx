@@ -1,17 +1,27 @@
+import { lazy, Suspense, type ComponentType } from 'react';
 import { Navigate, type RouteObject } from 'react-router-dom';
-import { HomePage } from '@/pages/HomePage';
-import { SearchPage } from '@/pages/SearchPage';
-import { LibraryPage } from '@/pages/LibraryPage';
-import { PlaylistPage } from '@/pages/PlaylistPage';
-import { VideoPage } from '@/pages/VideoPage';
-import { StatsPage } from '@/pages/StatsPage';
+import { RouteFallback } from '@/components/common/RouteFallback';
+
+const lazyPage = (loader: () => Promise<Record<string, ComponentType>>, key: string) =>
+  lazy(() => loader().then((m) => ({ default: m[key] })));
+
+const HomePage = lazyPage(() => import('@/pages/HomePage'), 'HomePage');
+const SearchPage = lazyPage(() => import('@/pages/SearchPage'), 'SearchPage');
+const LibraryPage = lazyPage(() => import('@/pages/LibraryPage'), 'LibraryPage');
+const PlaylistPage = lazyPage(() => import('@/pages/PlaylistPage'), 'PlaylistPage');
+const VideoPage = lazyPage(() => import('@/pages/VideoPage'), 'VideoPage');
+const StatsPage = lazyPage(() => import('@/pages/StatsPage'), 'StatsPage');
+
+const withSuspense = (node: React.ReactNode) => (
+  <Suspense fallback={<RouteFallback />}>{node}</Suspense>
+);
 
 export const routes: RouteObject[] = [
-  { path: '/', element: <HomePage /> },
-  { path: '/search', element: <SearchPage /> },
-  { path: '/library', element: <LibraryPage /> },
-  { path: '/playlist/:id', element: <PlaylistPage /> },
-  { path: '/video', element: <VideoPage /> },
-  { path: '/stats', element: <StatsPage /> },
+  { path: '/', element: withSuspense(<HomePage />) },
+  { path: '/search', element: withSuspense(<SearchPage />) },
+  { path: '/library', element: withSuspense(<LibraryPage />) },
+  { path: '/playlist/:id', element: withSuspense(<PlaylistPage />) },
+  { path: '/video', element: withSuspense(<VideoPage />) },
+  { path: '/stats', element: withSuspense(<StatsPage />) },
   { path: '*', element: <Navigate to="/" replace /> },
 ];

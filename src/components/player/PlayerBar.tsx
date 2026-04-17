@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { ChevronUp, Maximize2, Video } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { usePlayerStore } from '@/stores/playerStore';
@@ -22,6 +22,7 @@ export function PlayerBar() {
   const location = useLocation();
   const isVideoMode = mode === 'video';
   const onVideoPage = location.pathname === '/video';
+  const reduceMotion = useReducedMotion();
 
   const onMetaClick = () => {
     if (isVideoMode) {
@@ -36,9 +37,45 @@ export function PlayerBar() {
       initial={{ y: 16, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ delay: 0.12, duration: 0.4, ease: [0.19, 1, 0.22, 1] }}
-      className="relative z-30 flex h-player-bar shrink-0 items-center gap-6 border-t border-white/[0.04] bg-surface-1/85 px-4 backdrop-blur-2xl"
+      drag={reduceMotion ? false : 'y'}
+      dragConstraints={{ top: 0, bottom: 0 }}
+      dragElastic={{ top: 0.25, bottom: 0 }}
+      dragDirectionLock
+      onDragEnd={(_, info) => {
+        if (info.offset.y < -60 || info.velocity.y < -400) openNowPlaying();
+      }}
+      className="relative z-30 flex min-h-player-bar shrink-0 flex-col items-stretch gap-1 border-t border-white/[0.04] bg-surface-1/85 px-3 py-2 backdrop-blur-2xl md:h-player-bar md:min-h-0 md:flex-row md:items-center md:gap-6 md:px-4 md:py-0"
     >
-      <div className="flex min-w-0 flex-1 items-center gap-2">
+      {/* Mobile: compact single row */}
+      <div className="flex items-center gap-2 md:hidden">
+        {isVideoMode && (
+          <span className="flex items-center gap-1 rounded-full bg-accent/15 px-1.5 py-0.5 text-[9px] font-medium uppercase tracking-wider text-accent">
+            <Video className="h-2.5 w-2.5" />
+            Video
+          </span>
+        )}
+        <button
+          onClick={onMetaClick}
+          className="flex min-w-0 flex-1 items-center gap-2 rounded-md p-1 text-left transition-colors active:bg-surface-2/60"
+          aria-label="Open Now Playing"
+        >
+          <NowPlayingMeta compact />
+          <ChevronUp className="h-4 w-4 shrink-0 text-text-tertiary" />
+        </button>
+        <LikeButton
+          liked={liked}
+          disabled={!currentTrack}
+          size="sm"
+          onToggle={() => currentTrack && toggleLike(currentTrack.videoId)}
+        />
+        <PlaybackControls compact />
+      </div>
+      <div className="md:hidden">
+        <ProgressSlider variant="thin" />
+      </div>
+
+      {/* Desktop / tablet: three-column */}
+      <div className="hidden min-w-0 flex-1 items-center gap-2 md:flex">
         {isVideoMode && (
           <span className="ml-1 flex items-center gap-1 rounded-full bg-accent/15 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-accent">
             <Video className="h-3 w-3" />
@@ -65,12 +102,12 @@ export function PlayerBar() {
         />
       </div>
 
-      <div className="flex flex-[1.4] flex-col items-center gap-1.5">
+      <div className="hidden flex-[1.4] flex-col items-center gap-1.5 md:flex">
         <PlaybackControls />
         <ProgressSlider />
       </div>
 
-      <div className="flex flex-1 items-center justify-end gap-2">
+      <div className="hidden flex-1 items-center justify-end gap-2 md:flex">
         <ExtraControls />
         <VolumeControl />
       </div>

@@ -43,7 +43,7 @@ export function SearchPage() {
   }, [debounced, pushRecent]);
 
   return (
-    <div className="h-full overflow-y-auto px-10 pb-32 pt-8">
+    <div className="h-full overflow-y-auto px-4 pb-32 pt-6 md:px-10 md:pt-8">
       <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.2em] text-text-tertiary">
         Search
       </p>
@@ -61,7 +61,7 @@ export function SearchPage() {
 
       {query && (
         <>
-          <div className="sticky top-0 z-[5] -mx-10 mb-6 border-b border-white/[0.04] bg-surface-0/80 px-10 py-2 backdrop-blur-md">
+          <div className="sticky top-0 z-[5] -mx-4 mb-6 border-b border-white/[0.04] bg-surface-0/80 px-4 py-2 backdrop-blur-md md:-mx-10 md:px-10">
             <div className="flex gap-1">
               {TABS.map((tab) => (
                 <button

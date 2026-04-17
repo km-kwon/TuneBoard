@@ -179,7 +179,7 @@ function PlaylistBody({
       {/* Sticky compact header */}
       <div
         className={cn(
-          'pointer-events-none absolute inset-x-0 top-0 z-10 flex h-14 items-center gap-4 border-b border-white/[0.04] bg-surface-1/85 px-10 backdrop-blur-2xl transition-opacity duration-200',
+          'pointer-events-none absolute inset-x-0 top-0 z-10 flex h-14 items-center gap-4 border-b border-white/[0.04] bg-surface-1/85 px-4 md:px-10 backdrop-blur-2xl transition-opacity duration-200',
           scrollProgress > 0.35 ? 'opacity-100' : 'opacity-0',
         )}
         style={{ background: `linear-gradient(to right, rgb(${cssRgb} / 0.25), rgb(var(--surface-1) / 0.9))` }}
@@ -227,7 +227,7 @@ function PlaylistBody({
           const track = tracks[index];
           if (!track) return null;
           return (
-            <div className="px-10">
+            <div className="px-4 md:px-10">
               <TrackListRow
                 index={index + 1}
                 track={track}
@@ -266,9 +266,9 @@ function PlaylistHeader({
   onPlay: () => void;
 }) {
   return (
-    <header className="relative px-10 pb-6 pt-14">
-      <div className="relative flex items-end gap-6">
-        <div className="relative h-52 w-52 shrink-0 overflow-hidden rounded-md shadow-3">
+    <header className="relative px-4 md:px-10 pb-6 pt-14">
+      <div className="relative flex flex-col items-start gap-4 sm:flex-row sm:items-end sm:gap-6">
+        <div className="relative h-36 w-36 shrink-0 overflow-hidden rounded-md shadow-3 md:h-52 md:w-52">
           {playlist.thumbnailUrl ? (
             <img
               src={playlist.thumbnailUrl}
@@ -296,7 +296,7 @@ function PlaylistHeader({
           <p className="mb-3 font-mono text-[11px] uppercase tracking-[0.22em] text-text-tertiary">
             Playlist
           </p>
-          <h1 className="mb-3 font-display text-6xl font-bold leading-none tracking-tight">
+          <h1 className="mb-3 font-display text-4xl font-bold leading-none tracking-tight md:text-6xl">
             {playlist.title}
           </h1>
           {playlist.description && (
@@ -339,10 +339,10 @@ function PlaylistHeader({
         </button>
       </div>
 
-      <div className="mt-8 grid grid-cols-[24px_1fr_1fr_80px] gap-4 border-b border-white/[0.04] px-3 pb-2 font-mono text-[10px] uppercase tracking-[0.18em] text-text-tertiary">
+      <div className="mt-8 grid grid-cols-[24px_1fr_80px] md:grid-cols-[24px_1fr_1fr_80px] gap-4 border-b border-white/[0.04] px-3 pb-2 font-mono text-[10px] uppercase tracking-[0.18em] text-text-tertiary">
         <span>#</span>
         <span>Title</span>
-        <span>Album</span>
+        <span className="hidden md:inline">Album</span>
         <span className="text-right">Time</span>
       </div>
     </header>
@@ -373,7 +373,7 @@ function TrackListRow({
       onContextMenu={onContextMenu}
       onDoubleClick={onPlay}
       className={cn(
-        'group grid grid-cols-[24px_1fr_1fr_80px] items-center gap-4 rounded-sm px-3 py-2 transition-colors duration-150 ease-out-quart',
+        'group grid grid-cols-[24px_1fr_80px] md:grid-cols-[24px_1fr_1fr_80px] items-center gap-4 rounded-sm px-3 py-2 transition-colors duration-150 ease-out-quart',
         active ? 'bg-accent/10' : 'hover:bg-surface-2',
       )}
     >
@@ -446,7 +446,7 @@ function TrackListRow({
         </div>
       </button>
 
-      <p className="min-w-0 truncate text-xs text-text-secondary">{track.album?.name ?? '—'}</p>
+      <p className="hidden min-w-0 truncate text-xs text-text-secondary md:block">{track.album?.name ?? '—'}</p>
 
       <div className="flex items-center justify-end gap-2">
         <button
@@ -471,7 +471,7 @@ function TrackListRow({
 
 function PlaylistSkeleton() {
   return (
-    <div className="h-full overflow-y-auto px-10 pb-32 pt-14">
+    <div className="h-full overflow-y-auto px-4 md:px-10 pb-32 pt-14">
       <div className="flex items-end gap-6">
         <Skeleton className="h-52 w-52 rounded-md" />
         <div className="flex flex-1 flex-col gap-3 pb-4">
@@ -482,7 +482,7 @@ function PlaylistSkeleton() {
       </div>
       <div className="mt-10 flex flex-col gap-2">
         {Array.from({ length: 10 }).map((_, i) => (
-          <div key={i} className="grid grid-cols-[24px_1fr_1fr_80px] items-center gap-4 px-3 py-2">
+          <div key={i} className="grid grid-cols-[24px_1fr_80px] md:grid-cols-[24px_1fr_1fr_80px] items-center gap-4 px-3 py-2">
             <Skeleton className="h-3 w-3" />
             <div className="flex items-center gap-3">
               <Skeleton className="h-10 w-10 rounded-xs" />
@@ -502,7 +502,7 @@ function PlaylistSkeleton() {
 
 function PlaylistError({ authRequired, id }: { authRequired: boolean; id: string }) {
   return (
-    <div className="flex h-full items-center justify-center px-10">
+    <div className="flex h-full items-center justify-center px-4 md:px-10">
       <div className="flex max-w-md flex-col items-center rounded-md border border-white/[0.06] bg-surface-2/60 px-8 py-10 text-center">
         <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-hot/10 text-hot">
           <AlertCircle className="h-6 w-6" />

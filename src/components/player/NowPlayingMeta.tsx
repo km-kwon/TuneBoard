@@ -4,19 +4,21 @@ import { usePlayerStore } from '@/stores/playerStore';
 import { Marquee } from './Marquee';
 import { MiniEqualizer } from './MiniEqualizer';
 
-export function NowPlayingMeta() {
+export function NowPlayingMeta({ compact = false }: { compact?: boolean } = {}) {
   const track = usePlayerStore((s) => s.currentTrack);
   const isPlaying = usePlayerStore((s) => s.isPlaying);
+
+  const thumbSize = compact ? 'h-10 w-10' : 'h-14 w-14';
 
   if (!track) {
     return (
       <>
-        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-sm bg-surface-3">
+        <div className={`flex ${thumbSize} shrink-0 items-center justify-center rounded-sm bg-surface-3`}>
           <Music2 className="h-5 w-5 text-text-tertiary" />
         </div>
         <div className="flex min-w-0 flex-col items-start text-left">
           <p className="text-sm font-semibold text-text-secondary">Nothing playing</p>
-          <p className="text-xs text-text-tertiary">Pick a track to start</p>
+          {!compact && <p className="text-xs text-text-tertiary">Pick a track to start</p>}
         </div>
       </>
     );
@@ -25,7 +27,7 @@ export function NowPlayingMeta() {
   return (
     <>
       <div
-        className="relative h-14 w-14 shrink-0 overflow-hidden rounded-sm bg-surface-3 shadow-1"
+        className={`relative ${thumbSize} shrink-0 overflow-hidden rounded-sm bg-surface-3 shadow-1`}
         style={{ perspective: '400px' }}
       >
         <AnimatePresence mode="wait">
@@ -62,13 +64,13 @@ export function NowPlayingMeta() {
         <div className="flex items-center gap-1.5">
           <Marquee
             text={track.title}
-            className="max-w-[180px] text-sm font-semibold leading-tight text-text-primary"
+            className={`${compact ? 'max-w-[140px]' : 'max-w-[180px]'} text-sm font-semibold leading-tight text-text-primary`}
           />
           <MiniEqualizer active={isPlaying} className="shrink-0" />
         </div>
         <Marquee
           text={track.artists.map((a) => a.name).join(', ')}
-          className="mt-0.5 max-w-[200px] text-xs text-text-secondary"
+          className={`mt-0.5 ${compact ? 'max-w-[160px]' : 'max-w-[200px]'} text-xs text-text-secondary`}
         />
       </div>
     </>

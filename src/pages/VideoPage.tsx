@@ -38,7 +38,7 @@ export function VideoPage() {
   const { data: related, isLoading: relatedLoading } = useRelated(videoId);
 
   return (
-    <div className="h-full overflow-y-auto px-8 pb-32 pt-6">
+    <div className="h-full overflow-y-auto px-3 pb-32 pt-4 md:px-8 md:pt-6">
       <div className="mx-auto grid max-w-[1600px] grid-cols-1 gap-8 lg:grid-cols-[1fr_360px]">
         <div className="flex min-w-0 flex-col">
           <VideoStage />

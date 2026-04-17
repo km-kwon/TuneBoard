@@ -33,7 +33,7 @@ export function QueuePanel() {
       animate={{ x: 0, opacity: 1 }}
       exit={{ x: '100%', opacity: 0 }}
       transition={{ duration: 0.32, ease: [0.19, 1, 0.22, 1] }}
-      className="absolute right-0 top-0 z-20 flex h-full w-[360px] flex-col border-l border-white/[0.04] bg-surface-1/90 backdrop-blur-2xl"
+      className="absolute right-0 top-0 z-20 flex h-full w-full flex-col border-l border-white/[0.04] bg-surface-1/95 backdrop-blur-2xl sm:w-[360px]"
     >
       <header className="flex h-16 shrink-0 items-center justify-between px-5">
         <h3 className="font-display text-lg font-semibold tracking-tight">Queue</h3>
