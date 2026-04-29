@@ -26,5 +26,10 @@ yarn-error.log*
 .env.local
 .env.*.local
 
+# Local YouTube/Google auth material
+backend/browser.json
+backend/oauth.json
+backend/google_oauth.json
+
 # TS build info
 *.tsbuildinfo

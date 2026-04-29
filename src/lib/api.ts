@@ -6,6 +6,7 @@ import type {
   SearchFilter,
   SearchResults,
   Track,
+  AuthStatus,
 } from '@/types';
 
 const BASE = (import.meta.env.VITE_API_BASE?.replace(/\/$/, '') ?? '') + '/api';
@@ -41,6 +42,11 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 
 export const api = {
   health: () => request<{ ok: boolean; authed: boolean }>('/health'),
+
+  getAuthStatus: () => request<AuthStatus>('/auth/status'),
+  startGoogleAuth: () => request<{ authUrl: string }>('/auth/google/start'),
+  disconnectGoogleAuth: () =>
+    request<{ ok: boolean }>('/auth/google', { method: 'DELETE' }),
 
   listPlaylists: () => request<PlaylistSummary[]>('/playlists'),
   getPlaylist: (id: string) =>

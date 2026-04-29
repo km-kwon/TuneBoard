@@ -102,3 +102,18 @@ export interface Lyrics {
   hasTimestamps: boolean;
   lines: LyricsLine[];
 }
+
+export interface AuthStatus {
+  youtube: {
+    configured: boolean;
+    connected: boolean;
+    channelTitle: string;
+    channelId: string;
+    scopes: string;
+    tokenFile: string;
+  };
+  ytmusic: {
+    connected: boolean;
+    authFile: string;
+  };
+}

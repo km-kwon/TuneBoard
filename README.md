@@ -79,7 +79,7 @@ npm run dev          # http://localhost:5173
 # 2) Backend (별도 터미널)
 cd backend
 pip install -r requirements.txt
-# (선택) YouTube Music 로그인 headers: backend/README.md 참고
+# (선택) Google OAuth / YouTube Music 인증: backend/README.md 참고
 uvicorn app.main:app --reload --port 8000
 ```
 

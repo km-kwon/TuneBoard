@@ -6,6 +6,11 @@ from typing import Any
 
 from ytmusicapi import YTMusic
 
+try:
+    from ytmusicapi import OAuthCredentials
+except ImportError:  # ytmusicapi < 1.10 compatibility
+    OAuthCredentials = None  # type: ignore[assignment]
+
 from .settings import settings
 
 log = logging.getLogger(__name__)
@@ -26,7 +31,21 @@ def get_client() -> YTMusic:
         try:
             if auth_path is not None:
                 log.info("[ytmusic] using auth file: %s", auth_path)
-                _client = YTMusic(str(auth_path))
+                if (
+                    auth_path.name == "oauth.json"
+                    and OAuthCredentials is not None
+                    and settings.ytmusic_oauth_client_id
+                    and settings.ytmusic_oauth_client_secret
+                ):
+                    _client = YTMusic(
+                        str(auth_path),
+                        oauth_credentials=OAuthCredentials(
+                            client_id=settings.ytmusic_oauth_client_id,
+                            client_secret=settings.ytmusic_oauth_client_secret,
+                        ),
+                    )
+                else:
+                    _client = YTMusic(str(auth_path))
                 _client_has_auth = True
             else:
                 log.warning(

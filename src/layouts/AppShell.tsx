@@ -1,4 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
+import { useEffect } from 'react';
 import { useLocation, useRoutes } from 'react-router-dom';
 import { Sidebar } from '@/components/sidebar/Sidebar';
 import { MobileTabBar } from '@/components/layout/MobileTabBar';
@@ -13,13 +14,23 @@ import { InstallPrompt } from '@/components/common/InstallPrompt';
 import { TrackAnnouncer } from '@/components/common/TrackAnnouncer';
 import { routes } from '@/router/routes';
 import { usePlayerStore } from '@/stores/playerStore';
+import { useToastStore } from '@/stores/toastStore';
 import { useUIStore } from '@/stores/uiStore';
 
 export function AppShell() {
   const routed = useRoutes(routes);
   const location = useLocation();
   const nowPlayingOpen = usePlayerStore((s) => s.nowPlayingOpen);
+  const pulse = useToastStore((s) => s.pulse);
   const queueOpen = useUIStore((s) => s.panels.queue);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.get('auth') !== 'google') return;
+    const status = params.get('status');
+    pulse(status === 'connected' ? 'Google connected' : 'Google auth failed');
+    window.history.replaceState(null, '', location.pathname);
+  }, [location.pathname, location.search, pulse]);
 
   return (
     <div className="relative flex h-screen w-screen flex-col overflow-hidden bg-surface-0 text-text-primary">

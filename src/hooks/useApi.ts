@@ -14,6 +14,15 @@ export function useHealth() {
   });
 }
 
+export function useAuthStatus() {
+  return useQuery({
+    queryKey: ['auth-status'],
+    queryFn: api.getAuthStatus,
+    staleTime: ONE_MIN,
+    retry: false,
+  });
+}
+
 export function usePlaylists() {
   return useQuery({
     queryKey: ['playlists'],
