@@ -10,16 +10,23 @@ class Settings(BaseSettings):
     )
 
     auth_file: str = ""
-    cors_origins: str = "http://localhost:5173,http://localhost:5174,http://localhost:5175"
+    cors_origins: str = (
+        "http://localhost:5173,http://localhost:5174,http://localhost:5175"
+    )
     frontend_origin: str = "http://localhost:5173"
 
     google_client_id: str = ""
     google_client_secret: str = ""
-    google_redirect_uri: str = "http://localhost:8000/api/auth/google/callback"
+    google_redirect_uri: str = "http://localhost:8002/api/auth/google/callback"
     google_oauth_token_file: str = "google_oauth.json"
 
     ytmusic_oauth_client_id: str = ""
     ytmusic_oauth_client_secret: str = ""
+
+    lrclib_enabled: bool = True
+    lrclib_base_url: str = "https://lrclib.net/api"
+    lrclib_timeout: float = 4.0
+    lrclib_user_agent: str = "TuneBoard/0.1 (local development)"
 
     @property
     def auth_path(self) -> Path | None:
