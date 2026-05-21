@@ -16,15 +16,20 @@ export function UserProfile({ collapsed }: UserProfileProps) {
   const ytmusic = data?.ytmusic;
   const connected = !!youtube?.connected || !!ytmusic?.connected;
   const configured = !!youtube?.configured;
+  const ytmusicAuthError = !!ytmusic?.authFile && !!ytmusic?.authError;
   const label = youtube?.connected
     ? youtube.channelTitle || 'YouTube connected'
     : ytmusic?.connected
       ? 'YouTube Music connected'
+      : ytmusicAuthError
+        ? 'YT Music auth expired'
       : 'Guest';
   const subtitle = youtube?.connected
     ? 'Google OAuth active'
     : ytmusic?.connected
-      ? 'Backend ytmusic auth active'
+      ? `ytmusicapi ${ytmusic.version || ''}`.trim()
+      : ytmusicAuthError
+        ? 'Refresh backend/browser.json'
       : isError
         ? 'API offline'
         : configured

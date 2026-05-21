@@ -9,7 +9,7 @@ from fastapi.responses import RedirectResponse
 
 from .. import youtube_data_client
 from ..settings import settings
-from ..ytmusic_client import has_auth
+from ..ytmusic_client import status as ytmusic_status
 
 router = APIRouter()
 
@@ -19,13 +19,9 @@ _pending_states: dict[str, float] = {}
 
 @router.get("/auth/status")
 def auth_status() -> dict:
-    auth_path = settings.auth_path
     return {
         "youtube": youtube_data_client.status(),
-        "ytmusic": {
-            "connected": has_auth(),
-            "authFile": str(auth_path) if auth_path else "",
-        },
+        "ytmusic": ytmusic_status(),
     }
 
 

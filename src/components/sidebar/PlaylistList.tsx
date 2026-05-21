@@ -80,7 +80,7 @@ export function PlaylistList({ collapsed }: PlaylistListProps) {
             <p className="text-[11px] leading-relaxed text-text-tertiary">
               {authErr
                 ? 'Connect Google OAuth or configure backend/browser.json to see your library.'
-                : 'Is the API running on port 8000?'}
+                : 'Is the API running on port 8002?'}
             </p>
           </div>
         )}

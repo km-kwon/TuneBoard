@@ -83,7 +83,7 @@ export function SearchPage() {
           {isFetching && <SearchSkeleton />}
           {isError && (
             <div className="rounded-md border border-white/[0.06] bg-surface-2/60 p-6 text-sm text-text-secondary">
-              Search failed. Is the backend running on port 8000?
+              Search failed. Is the backend running on port 8002?
             </div>
           )}
           {!isFetching && !isError && data && (
@@ -440,6 +440,7 @@ function ArtistResults({ artists }: { artists: ArtistSummary[] }) {
 }
 
 function PlaylistResults({ playlists }: { playlists: PlaylistSummary[] }) {
+  const navigate = useNavigate();
   return (
     <motion.section variants={sectionVariants}>
       <h2 className="mb-4 font-display text-xl font-semibold">Playlists</h2>
@@ -447,6 +448,8 @@ function PlaylistResults({ playlists }: { playlists: PlaylistSummary[] }) {
         {playlists.slice(0, 12).map((p) => (
           <button
             key={p.id}
+            onClick={() => p.id && navigate(`/playlist/${p.id}`)}
+            disabled={!p.id}
             className="group flex flex-col rounded-md bg-surface-2/60 p-3 text-left transition-all hover:bg-surface-3"
           >
             <div className="relative aspect-square w-full overflow-hidden rounded-sm bg-surface-3 shadow-1">

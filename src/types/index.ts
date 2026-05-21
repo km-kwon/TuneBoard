@@ -115,5 +115,9 @@ export interface AuthStatus {
   ytmusic: {
     connected: boolean;
     authFile: string;
+    authType?: string;
+    authError?: string;
+    version?: string;
+    oauthClientConfigured?: boolean;
   };
 }
