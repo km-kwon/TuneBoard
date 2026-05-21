@@ -80,10 +80,10 @@ npm run dev          # http://localhost:5173
 cd backend
 pip install -r requirements.txt
 # (선택) Google OAuth / YouTube Music 인증: backend/README.md 참고
-uvicorn app.main:app --reload --port 8000
+uvicorn app.main:app --reload --port 8002
 ```
 
-Vite가 `/api/*`를 `localhost:8000`으로 프록시합니다. 프런트만 띄워도 더미 데이터로 대부분의 UX를 확인할 수 있습니다.
+Vite가 `/api/*`를 `localhost:8002`로 프록시합니다. 프런트만 띄워도 더미 데이터로 대부분의 UX를 확인할 수 있습니다.
 
 ## 배포
 

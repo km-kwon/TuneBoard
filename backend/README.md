@@ -12,6 +12,9 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
+If an old local venv was created before the Python install moved, recreate it.
+A broken venv often shows `No Python at ...` when running `backend\.venv\Scripts\python.exe`.
+
 ## Authentication
 
 Personal playlists and liked songs require authentication. Search, home feed,
@@ -29,7 +32,7 @@ want YouTube Music liked songs and library data.
 3. Add this authorized redirect URI:
 
 ```text
-http://localhost:8000/api/auth/google/callback
+http://localhost:8002/api/auth/google/callback
 ```
 
 4. Copy `backend/.env.example` to `backend/.env` and set:
@@ -51,9 +54,22 @@ ytmusicapi browser
 ```
 
 Follow the prompt: open music.youtube.com in a browser, open DevTools →
-Network, right-click any `/youtubei/v1/...` request → Copy as cURL, paste
-into the prompt. This writes `browser.json` next to your shell cwd — move
-it into `backend/browser.json`.
+Network, filter for `/browse`, open a successful POST request, and copy the
+request headers. Paste them into the prompt. This writes `browser.json` next to
+your shell cwd — move it into `backend/browser.json`.
+
+If Chrome/Edge only shows **Copy as cURL**, paste that cURL command into a local
+`backend/ytmusic_curl.txt` file, then run:
+
+```bash
+python import_ytmusic_curl.py ytmusic_curl.txt
+```
+
+This extracts the auth headers and writes `backend/browser.json`. Keep
+`ytmusic_curl.txt` private because it contains live Google session cookies.
+
+The backend watches the auth file's mtime/size, so you can refresh
+`browser.json` without restarting the FastAPI process.
 
 ### Option C — ytmusicapi OAuth
 
@@ -61,17 +77,21 @@ it into `backend/browser.json`.
 ytmusicapi oauth
 ```
 
-Writes `oauth.json`. Move into `backend/oauth.json`. Newer ytmusicapi versions
-may require `TUNEBOARD_YTMUSIC_OAUTH_CLIENT_ID` and
-`TUNEBOARD_YTMUSIC_OAUTH_CLIENT_SECRET`.
+Writes `oauth.json`. Move into `backend/oauth.json`. Current ytmusicapi OAuth
+requires a Google OAuth client ID/secret for **TVs and Limited Input devices**:
+
+```bash
+TUNEBOARD_YTMUSIC_OAUTH_CLIENT_ID=...
+TUNEBOARD_YTMUSIC_OAUTH_CLIENT_SECRET=...
+```
 
 ## Run
 
 ```bash
-uvicorn app.main:app --reload --port 8000
+uvicorn app.main:app --reload --port 8002
 ```
 
-The Vite dev server proxies `/api/*` to `http://localhost:8000` (see
+The Vite dev server proxies `/api/*` to `http://localhost:8002` (see
 `vite.config.ts`).
 
 ## Endpoints

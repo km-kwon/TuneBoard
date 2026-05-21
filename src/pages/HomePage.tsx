@@ -88,7 +88,7 @@ function HomeFallback() {
         <div>
           <p className="font-medium text-text-primary">Backend unavailable</p>
           <p className="mt-1 text-xs text-text-tertiary">
-            Start the FastAPI server on port 8000 to load real recommendations. Showing local
+            Start the FastAPI server on port 8002 to load real recommendations. Showing local
             fixtures below.
           </p>
         </div>
